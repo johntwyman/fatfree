@@ -2436,6 +2436,13 @@ final class Base extends Prefab implements ArrayAccess {
 			unset($jar['expire']);
 			session_cache_limiter('');
 			call_user_func_array('session_set_cookie_params',$jar);
+
+      // unfinishedteleporter change: Only set cookie parameters if the domain hasn't alread
+      // been set. This resolves a problem in some situations when running inside a Drupal
+      // module, where the different domain is chosen (without a dot at front) resulting in an
+      // extra cookie that causes all sorts of problems.
+      if (!call_user_func('session_get_cookie_params')['domain'])
+        call_user_func_array('session_set_cookie_params',$jar);
 		}
 		if (PHP_SAPI=='cli-server' &&
 			preg_match('/^'.preg_quote($base,'/').'$/',$this->hive['URI']))
